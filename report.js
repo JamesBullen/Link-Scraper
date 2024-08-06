@@ -1,27 +1,28 @@
-const require = createRequire(import.meta.url);
+// Package runs on modules, but mysql2 module doesn't contain promise support
+// 'require' is needed to fetch the promise compatible version
 import { createRequire } from "module";
-const temp = require('mysql2/promise')
+const require = createRequire(import.meta.url);
+const sql = require('mysql2/promise');
 
 function GenerateReport(pages, url) {
     // Formats hostname so it can be used to name and refernce our table
-    const formatedURL = new URL(url).hostname.split('.')
-    const tableName = `tbl_${formatedURL[0]}dot${formatedURL[1]}`
+    const formatedURL = new URL(url).hostname.split('.');
+    const tableName = `tbl_${formatedURL[0]}dot${formatedURL[1]}`;
     // Even if order is not important, is needed to format list correctly for the loop
     const sortedPages = sortPages(pages);
 
+    // First connect is to create the database if needed
     connectToDatabase();
     createDatabase();
+    // Second connect to use database. query(USE ...) to select a database doesn't work
     connectToDatabase('linksdb');
     createTable(tableName, sortedPages, tableName);
-
-    // Inserts results into table of scraped website
-    //fillTable(sortedPages, tableName);
 };
 
 // Connects program to MySQL
-let pool
+let pool;
 function connectToDatabase(database) {
-    pool = temp.createPool({
+    pool = sql.createPool({
         host: 'localhost',
         user: 'root',
         password: '',
@@ -29,6 +30,7 @@ function connectToDatabase(database) {
     });
 };
 
+// Creates database if our hard coded default doesn't exist already
 function createDatabase(){
     try {
         pool.query('CREATE DATABASE IF NOT EXISTS linksdb');
@@ -39,7 +41,7 @@ function createDatabase(){
 };
 
 async function createTable(table, pages) {
-    // Creates our website if it doesn't exist already, then clears its content in the case it already existed with entries
+    // Creates our website table if it doesn't exist already, then clears its content in the case it already existed with entries
     try {
         await pool.query(`CREATE TABLE IF NOT EXISTS ${table} (id INT AUTO_INCREMENT PRIMARY KEY, link TEXT, count INT)`);
         await pool.query(`TRUNCATE TABLE ${table}`);
@@ -48,10 +50,10 @@ async function createTable(table, pages) {
         throw new Error(error.message);
     };
 
-    // Concurrently fills the table with entries. Wont be added in sorted order, use ORDER BY query for that
+    // Concurrently fills the table with scraped results. Wont be added in sorted order, use ORDER BY query for that
     // Must be in this function. If seporate funcation, it will cause ascyning issues
     try {
-        await Promise.all(pages.map((page) =>pool.query(`INSERT INTO ${table}(link,count) VALUES(${temp.escape(page[0])}, ${page[1]})`)));
+        await Promise.all(pages.map((page) =>pool.query(`INSERT INTO ${table}(link,count) VALUES(${sql.escape(page[0])}, ${page[1]})`)));
         console.log(`Table filled`);
     } catch (error) {
         console.log(error.message);
@@ -64,10 +66,10 @@ function printReport(pages) {
     const sortedPages = sortPages(pages);
 
     console.log(`#==========#`);
-    console.log(`Report Start`)
+    console.log(`Report Start`);
     console.log(`#==========#`);
     for (const sortedPage of sortedPages) {
-        console.log(`${sortedPage[1]} counts of ${sortedPage[0]}`) 
+        console.log(`${sortedPage[1]} counts of ${sortedPage[0]}`) ;
     };
     console.log(`#=========#`);
     console.log(`Report End`);
@@ -77,7 +79,7 @@ function printReport(pages) {
 // Sorts given object by frequency in which internal links appear
 function sortPages(pages) {
     // Turns object into array storing the dictionary as another array
-    let pagesArray = []
+    let pagesArray = [];
     for (const page in pages) {
         pagesArray.push([page, pages[page]]);
     };
@@ -88,4 +90,4 @@ function sortPages(pages) {
     return pagesArray;
 };
 
-export {GenerateReport, printReport, sortPages};
+export {GenerateReport, printReport, sortPages, createDatabase};

@@ -1,6 +1,6 @@
 Dependencies
 - JSDOM
-- MySQL
+- MySQL2
 
 Dev Dependencies:
 - Jest

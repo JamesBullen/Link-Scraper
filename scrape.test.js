@@ -73,3 +73,5 @@ test('scrapeURLs: empty href', () => {
     
     expect(actual).toEqual(expected);
 });
+
+// No tests for scrapePage() and fetchHTML() due to requiring a dynamic input that can be externally changed

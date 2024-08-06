@@ -1,5 +1,5 @@
 import { test, expect } from "@jest/globals";
-import { printReport, sortPages } from "./report";
+import { createDatabase, sortPages } from "./report";
 
 test('sortPages: basic sort', () => {
     const input = {'One': 23, 'Two': 12, 'Three': 56};
@@ -32,3 +32,5 @@ test('sortPages: minus intergers', () => {
     
     expect(actual).toEqual(expected);
 });
+
+// No tests for MySQL related functions due to Jest not working well with a dependency
