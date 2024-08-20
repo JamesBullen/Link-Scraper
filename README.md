@@ -1,4 +1,4 @@
-# Web Scraper
+# Internal Link Scraper
 A web scraper that crawls through an emulated website of a given URL. Once finished it'll store the individual links and frequency of appearance to a MySQL database
 
 ## About
@@ -15,7 +15,7 @@ The recursive function will return an object of the full ink URL and count of oc
 - Jest
 
 ### Installation
-Simply place the folder on the device you wish to run it on. Where you place will effect the file path
+Simply place the folder on the device you wish to run it on.
 
 ### Executing program
 - npm run start <website URL> (for WSL)
