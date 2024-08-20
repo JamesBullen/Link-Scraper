@@ -69,6 +69,7 @@ async function scrapePage(baseURL, newURL = baseURL, pages = {}) {
     // Gets all anchors of given URL and recursively checks them all for more interal links
     const urls = scrapeURLs(html, baseURL);
     try {
+        // Concurrently checks every link
         await Promise.all(urls.map((url) => scrapePage(baseURL, url, pages)));
     } catch (error) {
         console.log(`${Object.keys(pages).length}: ${error.message}`);
