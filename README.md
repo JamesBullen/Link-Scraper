@@ -1,5 +1,5 @@
 # Internal Link Scraper
-A web scraper that crawls through an emulated website of a given URL. Once finished it'll store the individual links and frequency of appearance to a MySQL database
+A web scraper that crawls through an emulated website of a given URL. Once finished it'll store the individual links and frequency of appearance to a MySQL database.
 
 ## About
 The program will fetch the HTML from the given URL, and then emulate a copy of the website using JSDOM. Now that we have our virtual copy, `.querySelectorAll()` can be used to get all the anchor tags. External links are filtered by comparing the domain from the href, with the domain from the original given URL. Those that are internal links, are counted and then recursively emulated, and scraped for any anchors they have.
