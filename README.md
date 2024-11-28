@@ -13,6 +13,7 @@ The recursive function will return an object of the full ink URL and count of oc
 
 ### Dev Dependencies
 - Jest
+- dotenv
 
 ### Installation
 Simply place the folder on the device you wish to run it on.

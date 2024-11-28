@@ -4,6 +4,9 @@ import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const sql = require('mysql2/promise');
 
+require('dotenv').config();
+const sqlPassword = process.env.sqlPassword;
+
 function GenerateReport(pages, url) {
     // Formats hostname so it can be used to name and refernce our table
     const formatedURL = new URL(url).hostname.split('.');
@@ -25,7 +28,7 @@ function connectToDatabase(database) {
     pool = sql.createPool({
         host: 'localhost',
         user: 'root',
-        password: '',
+        password: sqlPassword,
         database: database
     });
 };
